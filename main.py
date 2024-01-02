@@ -166,45 +166,45 @@ def async_send_data(socket: WebSocket) -> None:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             loop.run_until_complete(socket.send_text(f'Update progress {log_service.get_logs()}'))
+def a():
+    app = FastAPI()
 
-app = FastAPI()
-
-# Mount the static files (images) at the "/static" path
-app.mount("/static", StaticFiles(directory="static"), name="static")
+    # Mount the static files (images) at the "/static" path
+    app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-@app.get("/")
-async def get():
-    html = open("static/use_ai.html", "r").read()
-    return HTMLResponse(content=html, status_code=200, headers={"Content-Type": "text/html"})
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket) -> None:
-    await websocket.accept()
-    # Receive data as plain text
-    data = await websocket.receive_text()
-    # print("Received data:", data)
-    subthread = threading.Thread(target=async_send_data, args=(websocket,))
-    with threading.Lock():
-        subthread.start()
-    # Split the received data into product_link and path_link
-    try:
-        # Split using a delimiter, for example '/'
-        parts = data.split('*')
-        if len(parts) >= 2:
-            product_link = parts[0].strip()
-            path_link = parts[1].strip()
+    @app.get("/")
+    async def get():
+        html = open("static/use_ai.html", "r").read()
+        return HTMLResponse(content=html, status_code=200, headers={"Content-Type": "text/html"})
+    @app.websocket("/ws")
+    async def websocket_endpoint(websocket: WebSocket) -> None:
+        await websocket.accept()
+        # Receive data as plain text
+        data = await websocket.receive_text()
+        # print("Received data:", data)
+        subthread = threading.Thread(target=async_send_data, args=(websocket,))
+        with threading.Lock():
+            subthread.start()
+        # Split the received data into product_link and path_link
+        try:
+            # Split using a delimiter, for example '/'
+            parts = data.split('*')
+            if len(parts) >= 2:
+                product_link = parts[0].strip()
+                path_link = parts[1].strip()
 
-            main(get_google_cli(), product_link, path_link)
+                main(get_google_cli(), product_link, path_link)
 
-            # Your logic to use product_link and path_link here
+                # Your logic to use product_link and path_link here
 
-            # await websocket.send_text(f'Received Product Link: {product_link}, Path Link: {path_link}')
-        else:
-            raise ValueError("Invalid data format: not enough values to unpack")
-    except Exception as e:
-        print("Error processing data:", e)
-        await websocket.send_text(f"Error processing data: {str(e)}")
-
+                # await websocket.send_text(f'Received Product Link: {product_link}, Path Link: {path_link}')
+            else:
+                raise ValueError("Invalid data format: not enough values to unpack")
+        except Exception as e:
+            print("Error processing data:", e)
+            await websocket.send_text(f"Error processing data: {str(e)}")
+a()
     # product_sheet_link = "https://docs.google.com/spreadsheets/d/1d3nGcIRPn6dQ6xXHy11Wx8DRgvPLRzzOFx2I7DtlRg4/edit#gid=997280020"
     # path_sheet_link = "https://docs.google.com/spreadsheets/d/1d3nGcIRPn6dQ6xXHy11Wx8DRgvPLRzzOFx2I7DtlRg4/edit#gid=997280020"
 
