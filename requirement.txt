@@ -1,0 +1,5 @@
+numpy
+pandas
+gensim
+sentence-transformers
+gspread

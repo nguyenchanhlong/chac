@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>API Function Executor</title>
+    <link rel="stylesheet" href="main_style.css">
+
+</head>
+<body>
+    <header class="header">
+        <a href="#" class="logo">ByteInsigts</a>
+        <nav class="navbar">
+            <a href="#" class="active">Home</a>
+            <a href="#">About</a>
+        </nav>
+    </header>
+    <section class="home">
+        <div class="home-content">
+            <h1>AIBeastLex</h1>
+            <h3>AI Crawling Website</h3>
+            <p> A futuristic NLP tool blending the raw strength of animal representation with advanced AI.
+                Unleash the primal power of language processing as BeastLingua redefines the future of communication and comprehension.
+                Roar into a new era with BeastLingua, where AI meets untamed instincts.</p>
+            <div class="btn-box">
+                <a id="delayedLink" href="http://localhost:8000">Use AI</a>
+                <a href="#">Contact Us</a>
+            </div>
+        </div>
+        <span class="home-imgHover"></span>
+    </section>
+    <div id="loadingOverlay" class="overlay">
+      <div class="loading-content">
+      </div>
+    </div>
+</body>
+<script>
+    document.getElementById('delayedLink').addEventListener('click', function (event) {
+        event.preventDefault(); // Prevent the default behavior of the link
+
+        // Show the loading overlay
+        document.getElementById('loadingOverlay').style.display = 'flex';
+
+        // Wait for 2 seconds (2000 milliseconds) using setTimeout
+        setTimeout(function () {
+        // Hide the loading overlay
+        document.getElementById('loadingOverlay').style.display = 'none';
+
+        // Navigate to the desired href after the delay
+        window.location.href = event.target.href;
+        }, 2000);
+    });
+</script>
+</html>

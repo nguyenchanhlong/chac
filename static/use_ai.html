@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Function Executor</title>
+<!--    <link rel="stylesheet" type="text/css" href="/use_ai_style.css">-->
+</head>
+<style>
+        body {
+            font-family: 'Arial', sans-serif;
+            /*background-color: #f5f5f5;*/
+            margin: 0;
+            padding: 0;
+        }
+
+        .ui-form {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+            margin-top: -30px;
+        }
+        #title {
+            margin-top: -25px;
+        }
+        #form {
+            margin-top: -15px;
+        }
+
+        .form-container {
+          width: 600px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column; /* Change flex direction to column */
+            align-items: left;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .form-group label {
+            width: 150px;
+            text-align: left;
+            margin-right: 10px;
+            font-weight: bold;
+            color: #000844;
+        }
+
+
+        .form-group input:focus {
+            border-color: #00ff00; /* Green border when in focus */
+        }
+        .form-group input {
+            border: none;
+            outline: none; /* Remove default input outline */
+            width: 100%;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            border: 1px solid #0014B2;
+            transition: border-color 0.3s;
+            width: 100%;
+            height: 50px;
+            border-radius: 7px;
+            margin-top: 1px;
+        }
+
+        .input-container:focus-within {
+          border: 2px solid black;
+          border-color: #0014B2;
+        }
+
+        .icon {
+            padding: 10px; /* Adjust the padding as needed */
+        }
+
+        .center-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            flex-direction: column;
+        }
+
+
+
+        .center-button button {
+            width: 120px;
+            height: 40px;
+            border-radius: 7px;
+            background-color: #3349FF;
+            color: white;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+
+        .center-button button:hover {
+            background-color: #001AE3; /* Change background color on hover */
+            border-color: #000846;
+        }
+
+
+        .center-button button:active {
+          background-color: black;
+        }
+
+
+        .loading-spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #001AE3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none; /* Hide the spinner initially */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .icon img {
+            width: 20px;
+            height: 20px;
+            display: block;
+        }
+
+        #product_and_path {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+            background: white;
+        }
+
+        #ProductPathTable,
+        #resultsTable {
+
+            /*width: 100%;*/
+            max-width: 800px;
+            /*background: transparent;*/
+            border-radius: 10px;
+            /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+            margin-top: -10px;
+        }
+
+        #ProductPathTable th,
+        #resultsTable th,
+        #ProductPathTable td,
+        #resultsTable td {
+            display: flex;
+            width: 945px;
+            /*max-width: ;*/
+            padding: 15px;
+            text-align: left;
+            /*border-bottom: 1px solid #ddd;*/
+        }
+    </style>
+</head>
+<body>
+    <div class="ui-form">
+        <div>
+            <img src="https://cdn.dribbble.com/users/128315/screenshots/2605603/media/c721a57d33f983a7856432b6a46cba1b.gif" alt="Icon" width="300" height="230">
+            <h2 id="title">Ai-Based NLP Matching Tool</h2>
+        </div>
+        <form class="form-container" id="form">
+            <div class="form-group">
+                <label for="productLink">Product Link</label>
+                <div class="input-container">
+                    <div class="icon">
+                        <img src="https://freeiconshop.com/wp-content/uploads/edd/link-open-flat.png" alt="Icon">
+                    </div>
+                    <input type="text" id="productLink" name="productLink" placeholder="Enter Google Sheet Link of Product Data">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="pathLink">Path Link</label>
+                <div class="input-container">
+                    <div class="icon">
+                        <img src="https://freeiconshop.com/wp-content/uploads/edd/link-open-flat.png" alt="Icon">
+                    </div>
+                    <input type="text" id="pathLink" name="pathLink" placeholder="Enter Google Sheet Link of Path Data">
+                </div>
+            </div>
+
+            <div class="center-button">
+                <button type="button" onclick="executeApiFunction()">Run</button>
+                <div id="loadingSpinner" class="loading-spinner"></div>
+            </div>
+        </form>
+    </div>
+
+    <div id="product_and_path">
+        <form action="" style="background: #f8f8f8; color: #333; padding: 20px; border-radius: 10px; overflow: auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <table id="ProductPathTable">
+                <thead>
+                    <tr>
+                        <th id="productHeader">Link</th>
+                        <th id="pathHeader">Path</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </form>
+        <div style="margin-top: 20px; padding: 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <!-- Add table headers as needed -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        var ws = new WebSocket("ws://localhost:8000/ws");
+
+        ws.onmessage = function (event) {
+            var data_table_results = document.querySelector('#resultsTable tbody');
+            var newRow = data_table_results.insertRow();
+            var newCell = newRow.insertCell(0);
+            newCell.appendChild(document.createTextNode(event.data));
+        };
+        function executeApiFunction(event) {
+            // Retrieve values from input fields
+            var productLink = document.getElementById("productLink").value;
+            var pathLink = document.getElementById("pathLink").value;
+
+            // Set the header text dynamically
+            var productHeader = document.getElementById("productHeader");
+            var pathHeader = document.getElementById("pathHeader");
+            productHeader.textContent = "Link: " + productLink;
+            pathHeader.textContent = "Path: " + pathLink;
+
+            var combinedLinks = productLink + '*' + pathLink;
+
+            ws.send(combinedLinks);
+             // Clear input values
+            document.getElementById("productLink").value = '';
+            document.getElementById("pathLink").value = '';
+
+            // pathLink = '';
+            event.preventDefault();
+
+            // You can replace this with your actual API endpoint and logic
+            var apiUrl = '{0}/execute';
+
+            // Create a JSON object with the data to send to the API
+            var requestData = {
+                productLink: productLink,
+                pathLink: pathLink
+            };
+
+            // Show the loading spinner
+            var loadingSpinner = document.getElementById("loadingSpinner");
+            loadingSpinner.style.display = "inline-block";
+
+            // Disable the "Run" button while the API request is in progress
+            var runButton = document.querySelector(".center-button button");
+            runButton.disabled = true;
+
+            // Make an API request (you can use the Fetch API or other libraries)
+            // Replace this with your actual API request logic
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the API response here
+                console.log('API response:', data);
+                // You can update the UI with the response data if needed
+
+                // Hide the loading spinner and re-enable the "Run" button
+                loadingSpinner.style.display = "none";
+                runButton.disabled = false;
+            })
+            .catch(error => {
+                console.error('API request failed:', error);
+                // Handle errors here
+
+                // Hide the loading spinner and re-enable the "Run" button
+                loadingSpinner.style.display = "none";
+                runButton.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
